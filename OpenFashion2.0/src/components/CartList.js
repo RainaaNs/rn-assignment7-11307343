@@ -1,85 +1,65 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity} from "react-native";
-// import { useCart } from "../context/CartProvider";
-
-// const cartproducts = [
-//     {
-//         id:99,
-//         image: require('../assets/dress1.png'), 
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'OFFICE WEAR',
-//         title2: 'Office wear for your office',
-//         title3: '$120'
-//     },
-//     {
-//         id:100,
-//         image: require('../assets/dress4.png'), 
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'LAMEREI',
-//         title2: 'Recycle Boucle Knit Cardigan Pink',
-//         title3: '$120'
-//     },
-//     {
-//         id:101,
-//         image: require('../assets/dress3.png'), 
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'CHURCH WEAR',
-//         title2: 'Recycle Boucle Knit Cardigan Pink',
-//         title3: '$120'
-//     }
-// ]
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ScrollView} from "react-native";
+import { useCart } from "../context/CartProvider";
 
 
 
 const CartList = () => {
-    // const { cartItems, removeFromCart } = useCart();
+    const { cartItems, removeFromCart } = useCart();
 
     const renderItem = ({item}) => (
         <View style={{flexDirection:'row'}}>
             <View>
-                <Image style={styles.cartImage} source={item.image}/>
+                <Image style={styles.cartImage} 
+                       source={{uri: item.image}}
+                       resizeMode="contain"
+                       />
             </View>
             <TouchableOpacity style={styles.removeImage} onPress={() => removeFromCart(item.id)}>
                 <Image source={require('../assets/remove.png')}/>
             </TouchableOpacity>
             <View>
-            <Text style={styles.textPosition}>
+            <View style={styles.textPosition}>
                <View>
                     <View>
-                        <Text style={styles.title1}>{item.title1}
-                        </Text>
+                        <Text numberOfLines={4} style={styles.title1}>{item.title}</Text>
                     </View>
                     <View>
-                        <Text style={styles.title2}>{item.title2}
-                        </Text>
+                        <Text style={styles.title2}>{item.category}</Text>
                     </View>
                     <View>
-                        <Text style={styles.title3}>{item.title3}
-                        </Text>
+                        <Text style={styles.title3}>${item.price ? item.price.toFixed(2) : '0.00'}</Text>
                     </View>
                 </View>
-            </Text>
+            </View>
             </View>
         </View>
     )
 
-    // const totalPrice = cartItems.reduce((sum, item) => sum + parseFloat(item.title3.replace('$', '')), 0);
-
+    const totalPrice = cartItems.reduce((sum, item) => {
+        const price = item.price ? parseFloat(item.price) : 0;
+        return sum + price;
+    }, 0);
 
     return(
+        <View>
         <FlatList
-            // data = {cartItems}
+            data = {cartItems}
             renderItem = {renderItem}
             keyExtractor={(item) => item.id.toString()}
-            ListFooterComponent={() => <CheckoutFooter total={totalPrice} />}
             numColumns={1}
             contentContainerStyle={styles.cartListContainer}
-    />
+        />
+        <CheckoutFooter total={totalPrice} />
+        </View>
+
   );
 }
 
+
+
 const CheckoutFooter = ({total}) => {
-    // const { clearCartItems } = useCart();
+    const { clearCartItems } = useCart();
   
     return(
     <View style={styles.footerContainer}>
@@ -89,7 +69,7 @@ const CheckoutFooter = ({total}) => {
         </View>
 
         <View style={styles.blackfooter}></View>
-        <View style={{ top:-40}}>
+      
             <TouchableOpacity style={styles.checkoutview} onPress={() => { console.log('Checkout pressed'); clearCartItems();}}>
                 <View style={{marginHorizontal:10}}>
                     <Image style={styles.shoppingImage} source={require('../assets/shoppingBag.png')}/>
@@ -98,7 +78,7 @@ const CheckoutFooter = ({total}) => {
                     <Text style={styles.footcheckoutext}>CHECKOUT</Text>
                 </View>
             </TouchableOpacity>
-        </View>
+       
     </View>
     );
     
@@ -107,8 +87,9 @@ const CheckoutFooter = ({total}) => {
 const styles = StyleSheet.create({
     cartListContainer:{
     marginTop:25,
-    paddingBottom:50
+    paddingBottom:470
   },
+
   removeImage:{
     position: 'absolute',
     zIndex:1,
@@ -119,12 +100,13 @@ const styles = StyleSheet.create({
     width:100,
     height:130, 
     marginBottom:25,
-    marginLeft:28,
+    marginLeft:28
   },
   textPosition:{
     marginLeft:13, 
     marginBottom:22,
-    marginTop:25
+    marginTop:25,
+    width:200
   },
   title1:{
         fontSize:14,
@@ -148,7 +130,9 @@ const styles = StyleSheet.create({
         justifyContent:'space-between', 
         marginHorizontal:37, 
         marginLeft:25,
-        marginBottom: 17
+        paddingBottom: 17,
+        paddingTop:15,
+        backgroundColor:'white'
     },
     este:{
         marginTop:6,
@@ -161,12 +145,15 @@ const styles = StyleSheet.create({
         fontFamily:'tenorsans'
     },
     blackfooter:{
-        backgroundColor:'black', 
-        height:60
+        backgroundColor:'black',
+        width:'100%',
+        height: 80
     },
     checkoutview:{
         flexDirection:'row', 
-        justifyContent:'center'
+        justifyContent:'center',
+        marginVertical: 20,
+        marginTop:-50
     },
     footcheckoutext:{
         color:'white', 
@@ -180,13 +167,13 @@ const styles = StyleSheet.create({
         top:-3 
     },
     footerContainer:{
-        marginTop:440,
-        marginBottom:-10
-
+        marginTop:581,
+        marginBottom:0,
+        position: 'absolute',
+        width:'100%'
+    },
+    mainParent:{
     }
-    
-  
-
 })
 
 export default CartList;

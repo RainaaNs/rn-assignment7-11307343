@@ -1,16 +1,17 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import CartList from '../components/CartList';
-// import { useCart } from '../context/CartProvider';
+import { useCart } from '../context/CartProvider';
 
 
 
 const CartScreen = () => {
-  // const { cartItems } = useCart();
+  const { cartItems } = useCart();
 
   return (
     <View style={{backgroundColor:'white', flex:1}}>
-      <View style={styles.checkout} >
+
+      <View style={styles.checkout}>
         <View>
           <Text style={styles.checkoutText}>
             C H E C K O U T
@@ -21,19 +22,15 @@ const CartScreen = () => {
         </View>
       </View>
 
-      <View>
+      
         {cartItems.length > 0 ? (
           <CartList />
         ) : (
           <Text style={styles.emptyCartText}>Your cart is empty</Text>
         )}
-      
-      </View>
 
     </View>
    
-   
-    
   );
 };
 

@@ -1,87 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList } from "react-native";
-// import { useCart } from "../context/CartProvider";
+import { useCart } from "../context/CartProvider";
 import { useNavigation } from '@react-navigation/native';
 import { fetchProducts } from '../api/productApi';
 
-// const products = [
-//    {id:1, 
-//         image: require('../assets/dress1.png'), 
-//         overlayImage: require('../assets/add_circle.png'),
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'Office Wear',
-//         title2: 'reversible angora cardigan',
-//         title3: '$120'
-//     },
-//     {
-//         id: 2,
-//         image: require('../assets/dress2.png'),
-//         overlayImage: require('../assets/add_circle.png'),
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'Black',
-//         title2: 'reversible angora cardigan',
-//         title3: '$120'
-//       },
-//       {
-//         id: 3,
-//         image: require('../assets/dress3.png'),
-//         overlayImage: require('../assets/add_circle.png'),
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'Church Wear',
-//         title2: 'reversible angora cardigan',
-//         title3: '$120'
-//       },
-//       {
-//         id: 4,
-//         image: require('../assets/dress4.png'),
-//         overlayImage: require('../assets/add_circle.png'),
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'Lamerei',
-//         title2: 'reversible angora cardigan',
-//         title3: '$120'
-//       },
-//       {
-//         id: 5,
-//         image: require('../assets/dress5.png'),
-//         overlayImage: require('../assets/add_circle.png'),
-//         removeImage: require('../assets/remove.png'),
-//         title1: '21WN',
-//         title2: 'reversible angora cardigan',
-//         title3: '$120'
-//       },
-//       {
-//         id: 6,
-//         image: require('../assets/dress6.png'),
-//         overlayImage: require('../assets/add_circle.png'),
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'Lopo',
-//         title2: 'reversible angora cardigan',
-//         title3: '$120'
-//       },
-//       {
-//         id: 7,
-//         image: require('../assets/dress7.png'),
-//         overlayImage: require('../assets/add_circle.png'),
-//         removeImage: require('../assets/remove.png'),
-//         title1: '21WN',
-//         title2: 'reversible angora cardigan',
-//         title3: '$120'
-//       },
-      
-//       {
-//         id: 8,
-//         image: require('../assets/dress4.png'),
-//         overlayImage: require('../assets/add_circle.png'),
-//         removeImage: require('../assets/remove.png'),
-//         title1: 'Lame',
-//         title2: 'aratogas summer dress',
-//         title3: '$120'
-//       },
-// ];
 
 const ProductList = () => {
-    // const { addToCart } = useCart();
     const navigation = useNavigation();
+    const { addToCart } = useCart();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -107,23 +33,26 @@ const ProductList = () => {
     if (error) {
         return <Text>{error}</Text>;
     }
-
-
+    
+    
     const renderItem = ({item}) => (
-        <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { product: item.id })}>
-        
         <View>
             <View>
                 <TouchableOpacity style={styles.addcircleImage} onPress={() => addToCart(item)}>
                     <Image source={require('../assets/add_circle.png')}/>
                 </TouchableOpacity>
-                <Image style={styles.productImage} source={{uri: item.image}} 
+                <Image 
+                    style={styles.productImage} 
+                    source={{uri: item.image}}
                     resizeMode="contain"
-                    onError={(e) => {console.log('Image load error for ' + item.title + ':', e.nativeEvent.error);
-                    }}
-                    defaultSource={require('../assets/dress2.png')}/>
+                    onError={() => console.log('Image load error for ' + item.title)}
+                />
             </View>
             <View style={styles.titlesPositioning}>
+            <TouchableOpacity onPress={() => {
+                console.log("Item clicked:", item);
+                navigation.navigate('ProductDetail', { productId: item.id });
+            }}>
                <View style={styles.titles}>
                     <View style={{width:155}}>
                         <Text numberOfLines={5} ellipsizeMode="tail" style={styles.title1}>{item.title}</Text>
@@ -135,9 +64,10 @@ const ProductList = () => {
                         <Text style={styles.title3}>${item.price}</Text>
                     </View>
                 </View>
+            </TouchableOpacity>
             </View>
         </View>
-        </TouchableOpacity>
+        
     );
 
     return (

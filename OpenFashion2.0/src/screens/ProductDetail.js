@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView} from 'react-native';
+import { fetchProductDetails } from '../api/productApi';
 
 const ProductDetail = ({route}) => {
     const { productId} = route.params;
@@ -8,19 +9,23 @@ const ProductDetail = ({route}) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchProductDetails = async () => {
-        try {
-            const response = await fetch(`https://fakestoreapi.com/products/${productId}`);
-            const productData = await response.json();
-            setProduct(productData);
-        } catch (err) {
-            setError('Failed to fetch product details');
-        } finally {
-            setLoading(false);
-        }
+        const loadProductDetails = async () => {
+            if (!productId) {
+                setError('No product ID provided');
+                setLoading(false);
+                return;
+            }
+            try {
+                const productData = await fetchProductDetails(productId);
+                setProduct(productData);
+            } catch (err) {
+                setError('Failed to fetch product details');
+            } finally {
+                setLoading(false);
+            }
         };
 
-        fetchProductDetails();
+        loadProductDetails();
     }, [productId]);
 
     if (loading) {
@@ -31,6 +36,10 @@ const ProductDetail = ({route}) => {
         return <Text>{error}</Text>;
     }
 
+    if (!product) {
+        return <Text>Loading product details...</Text>;
+    }
+
   return (
     <View style={{backgroundColor:'white', flex:1}}>
         <ScrollView style={styles.scrollView}>
@@ -39,9 +48,14 @@ const ProductDetail = ({route}) => {
                    resizeMode="contain"
                    />
             <View style={styles.productMainDetails}>
+
                 <View style={styles.productTitleLine}>
-                    <Text style={styles.productTitle}>{product.title}</Text>
-                    <Image style={styles.exportImage} source={require('../assets/Export.png')}/>
+                    <View style={{width:250}}>
+                        <Text numberOfLines={5} style={styles.productTitle}>{product.title}</Text>
+                    </View>
+                    <View>
+                        <Image style={styles.exportImage} source={require('../assets/Export.png')}/>
+                    </View>
                 </View>
                 
                 <View style={{marginTop:5}}>
@@ -51,15 +65,18 @@ const ProductDetail = ({route}) => {
                 <View style={{marginTop:3}}>
                     <Text style={styles.estMoney}>${product.price}</Text>
                 </View>
-                <Text>{product.description}</Text>
+                <View>
+                    <Text style={styles.productDescription}>{product.description}</Text>
+                </View>
+                
             </View>
 
             <View style={styles.productsDetails}>
                 <View>
-                    <Text>M A T E R I A L S</Text>
+                    <Text style={styles.materialsHeading}>M A T E R I A L S</Text>
                 </View>
                 <View>
-                    <Text style={styles.MaterialsText}>We work with monitoring programmes to ensure compliance with safety, health and quality standards for our products.</Text>
+                    <Text style={styles.materialsText}>We work with monitoring programmes to ensure compliance with safety, health and quality standards for our products.</Text>
                 </View>
 
                 <View style={styles.materialsItems}>
@@ -129,7 +146,8 @@ const styles = StyleSheet.create ({
         justifyContent:'space-between'
     },
     productTitle:{
-        fontSize:18
+        fontSize:18,
+        fontFamily:'tenorsans'
     },
     exportImage:{
         width:20,
@@ -143,10 +161,19 @@ const styles = StyleSheet.create ({
     estMoney:{
         fontSize:20,
         color:'#DD8560',
-        // fontFamily:'tenorsans'
+        fontFamily:'tenorsans'
     },
     productMainDetailsLine2:{
         color:'#555555',
+        fontFamily:'tenorsans'
+    },
+    productDescription:{
+        fontFamily:'tenorsans',
+        marginTop:13,
+        marginBottom:10
+    },
+    materialsHeading:{
+        fontFamily:'tenorsans'
     },
     materialsItems:{
         flexDirection:'row',
@@ -154,25 +181,29 @@ const styles = StyleSheet.create ({
         opacity:0.6
     },
     materialsItemsPositioning:{
-        marginLeft:9
+        marginLeft:9,
+        fontFamily:'tenorsans',
+        marginTop:3
     },
     productsDetails:{
         flexDirection:'column',
         marginHorizontal:34,
         marginTop:18,
+        marginBottom:120
     },
-    MaterialsText:{
+    materialsText:{
         fontSize:15,
         marginBottom:20,
         marginTop:6,
         lineHeight:23,
-        opacity:0.6
+        opacity:0.6,
+        fontFamily:'tenorsans'
     },
     separator:{
         width:270,
         height:1,
         backgroundColor:'#555555',
-        marginTop:5,
+        marginTop:12,
         opacity:0.4
     },
     footer:{
@@ -194,13 +225,15 @@ const styles = StyleSheet.create ({
         flexDirection:'row', 
         justifyContent:'space-between', 
         marginTop:23, 
-        marginLeft:1
+        marginLeft:1,
     },
     shippingTitle:{
-        marginLeft:10
+        marginLeft:10,
+        fontFamily:'tenorsans'
     },
         shippingDetails:{
-        marginTop:7
+        marginTop:7,
+        fontFamily:'tenorsans'
     },
     shippingDetailsContainer:{
         marginLeft:34, 
@@ -209,7 +242,4 @@ const styles = StyleSheet.create ({
     flexDirectionrow:{
         flexDirection:'row'
     }
-    
-
-
 })
