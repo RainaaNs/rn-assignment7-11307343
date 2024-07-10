@@ -1,26 +1,57 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView} from 'react-native';
 
+const ProductDetail = ({route}) => {
+    const { productId} = route.params;
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-const ProductDetail = () => {
+    useEffect(() => {
+        const fetchProductDetails = async () => {
+        try {
+            const response = await fetch(`https://fakestoreapi.com/products/${productId}`);
+            const productData = await response.json();
+            setProduct(productData);
+        } catch (err) {
+            setError('Failed to fetch product details');
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchProductDetails();
+    }, [productId]);
+
+    if (loading) {
+        return <Text>Loading...</Text>;
+    }
+
+    if (error) {
+        return <Text>{error}</Text>;
+    }
+
   return (
-    
     <View style={{backgroundColor:'white', flex:1}}>
         <ScrollView style={styles.scrollView}>
-            <Image style={styles.productImage} source={require('../assets/dress4.png')}/>
+            <Image style={styles.productImage} 
+                   source={{ uri: product.image }}
+                   resizeMode="contain"
+                   />
             <View style={styles.productMainDetails}>
                 <View style={styles.productTitleLine}>
-                    <Text style={styles.productTitle}>L A M E R E I</Text>
+                    <Text style={styles.productTitle}>{product.title}</Text>
                     <Image style={styles.exportImage} source={require('../assets/Export.png')}/>
                 </View>
                 
                 <View style={{marginTop:5}}>
-                    <Text style={styles.productMainDetailsLine2}>Recycle Boucle Knit Cardigan Pink</Text>
+                    <Text style={styles.productMainDetailsLine2}>{product.category}</Text>
                 </View>
 
                 <View style={{marginTop:3}}>
-                    <Text style={styles.estMoney}>$120</Text>
+                    <Text style={styles.estMoney}>${product.price}</Text>
                 </View>
+                <Text>{product.description}</Text>
             </View>
 
             <View style={styles.productsDetails}>
