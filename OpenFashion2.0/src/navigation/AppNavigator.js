@@ -93,32 +93,22 @@ const CustomDrawerContent = (props) => (
   </DrawerContentScrollView>
 );
 
-const CartNavigator = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: '#ffffff',
-        }
-      }}>
-        <Stack.Screen
-          name="Cart"
-          component={CartScreen}
-          options={{
-            headerTitle: '',
-            headerLeft: () => <CustomHeaderCart />,
-          }}
-        />
-    </Stack.Navigator>
-  );
-};
-
 
 const AppNavigator = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="MainDrawer" component={MainDrawerNavigator} />
-          <Stack.Screen name="Cart" component={CartNavigator} />
+          <Stack.Screen name="Cart" component={CartScreen} 
+                        options={{ 
+                          headerShown: true,
+                            headerTitle: '',
+                            headerLeft: () => <CustomHeaderCart />,
+                            headerStyle: {
+                              backgroundColor: '#ffffff',
+                            }
+                        }} 
+                        
+          />
           <Stack.Screen name='ProductDetail' component={ProductDetail} 
                         options={{
                             headerShown: true,

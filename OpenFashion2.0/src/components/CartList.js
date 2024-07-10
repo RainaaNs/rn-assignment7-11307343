@@ -1,11 +1,13 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ScrollView} from "react-native";
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity} from "react-native";
 import { useCart } from "../context/CartProvider";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 const CartList = () => {
     const { cartItems, removeFromCart } = useCart();
+    const navigation = useNavigation();
 
     const renderItem = ({item}) => (
         <View style={{flexDirection:'row'}}>
@@ -19,20 +21,26 @@ const CartList = () => {
                 <Image source={require('../assets/remove.png')}/>
             </TouchableOpacity>
             <View>
-            <View style={styles.textPosition}>
-               <View>
+                <TouchableOpacity onPress={() => {
+                    console.log("Item clicked:", item);
+                    navigation.navigate('ProductDetail', { productId: item.id });
+                }}>
+                    <View style={styles.textPosition}>
                     <View>
-                        <Text numberOfLines={4} style={styles.title1}>{item.title}</Text>
+                            <View>
+                                <Text numberOfLines={4} style={styles.title1}>{item.title}</Text>
+                            </View>
+                            <View>
+                                <Text style={styles.title2}>{item.category}</Text>
+                            </View>
+                            <View>
+                                <Text style={styles.title3}>${item.price ? item.price.toFixed(2) : '0.00'}</Text>
+                            </View>
+                        </View>
                     </View>
-                    <View>
-                        <Text style={styles.title2}>{item.category}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.title3}>${item.price ? item.price.toFixed(2) : '0.00'}</Text>
-                    </View>
-                </View>
+                </TouchableOpacity>
             </View>
-            </View>
+            
         </View>
     )
 
